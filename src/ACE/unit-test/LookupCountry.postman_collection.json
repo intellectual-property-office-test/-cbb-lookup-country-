@@ -1,0 +1,1053 @@
+{
+	"info": {
+		"_postman_id": "1c764272-0ff0-4152-860e-f604928a1cd1",
+		"name": "LookupCountry",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getCountries/ ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?includeHistory=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeHistory",
+							"value": "true"
+						},
+						{
+							"key": "includeOffices",
+							"value": null,
+							"disabled": true
+						}
+					]
+				},
+				"description": "CoutryName with a Space"
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/{countryCode} with Space",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 Bad Request - Country Name is required\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Country Name is required\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.meta.error[0].code).to.eql(\"E.IPO.00014\");\r",
+							"    pm.expect(jsonData.meta.error[0].detail).to.eql(\"Country Name is required\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "11111",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB1",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/ ",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						" "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/{countryCode} Invalid Country",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 Bad Request - Country Name is required\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Item requested is not found\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.meta.error[0].code).to.eql(\"E.IPO.00014\");\r",
+							"    pm.expect(jsonData.meta.error[0].detail).to.eql(\"Item requested is not found\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "11111",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB1",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/XYS",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						"XYS"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/{countryCode} with Lookup True",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/Andorra?lookup=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						"Andorra"
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "getCountries/{countryCode} with Lookup True",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Ipo-Business-Tran-Id",
+								"value": "342342",
+								"type": "text"
+							},
+							{
+								"key": "X-Ipo-Domain",
+								"value": "CBB",
+								"type": "text"
+							},
+							{
+								"key": "X-Ipo-Reference-Id",
+								"value": "23432",
+								"type": "text"
+							},
+							{
+								"key": "X-Ipo-Date-Time",
+								"value": "2020-10-17T13:46:21.000Z",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:7801/ipo/LookupCountry/countries/Andorra?lookup=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7801",
+							"path": [
+								"ipo",
+								"LookupCountry",
+								"countries",
+								"Andorra"
+							],
+							"query": [
+								{
+									"key": "lookup",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "IBM App Connect Enterprise"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 01 Oct 2020 13:24:52 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "373"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"country\": [\n            {\n                \"countryDetail\": {\n                    \"code\": \"AD\",\n                    \"name\": \"Andorra\",\n                    \"countryEndonym\": \"Principat dAndorra\",\n                    \"applicationNumberFormat\": \"\",\n                    \"isRegionalOffice\": false,\n                    \"isInternationalOffice\": false,\n                    \"isInEEA\": false,\n                    \"sequence\": 0,\n                    \"isEC\": false,\n                    \"canClaimPriority\": true,\n                    \"isTrademarkEntity\": false,\n                    \"isPatentEntity\": false,\n                    \"validFrom\": null,\n                    \"validTo\": null,\n                    \"parisConventionIndicator\": false\n                }\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "getCountries/",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					]
+				},
+				"description": "All the Countries"
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries_lookup-True",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?lookup=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Lookup is True"
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries_lookup-True_IncludeOffices-True",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries?includeOffices=true&lookup=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries"
+					],
+					"query": [
+						{
+							"key": "includeHistoric",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeOffices",
+							"value": "true"
+						},
+						{
+							"key": "lookup",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/{countryCode} with only space",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/ ",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						" "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/eea",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "234234",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/eea?lookup",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						"eea"
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/eea?lookup=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/eea?lookup=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						"eea"
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountries/{countryCode} with invalid countryName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 Bad Request - Country Name is required\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Item requested is not found\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.meta.error[0].code).to.eql(\"E.IPO.00014\");\r",
+							"    pm.expect(jsonData.meta.error[0].detail).to.eql(\"Item requested is not found\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/xasd",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						"xasd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countries/?includeHistory=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?includeHistory=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeHistory",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countries/?lookup=true&includeHistory=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?lookup=true&includeHistory=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true"
+						},
+						{
+							"key": "includeHistory",
+							"value": "true"
+						},
+						{
+							"key": "includeOffices",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countries/?includeOffices=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?includeOffices=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeHistory",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeOffices",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countries/?lookup=true&includeOffices=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ipo-Business-Tran-Id",
+						"value": "342342",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Domain",
+						"value": "CBB",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Reference-Id",
+						"value": "23432",
+						"type": "text"
+					},
+					{
+						"key": "X-Ipo-Date-Time",
+						"value": "2020-10-17T13:46:21.000Z",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/ipo/LookupCountry/countries/?lookup=true&includeOffices=true",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ipo",
+						"LookupCountry",
+						"countries",
+						""
+					],
+					"query": [
+						{
+							"key": "lookup",
+							"value": "true"
+						},
+						{
+							"key": "includeHistory",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeOffices",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

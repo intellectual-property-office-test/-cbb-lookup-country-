@@ -1,0 +1,335 @@
+swagger: '2.0'
+info:
+  title: ${DEVOPS_PRODUCT_NAME}
+  x-ibm-name: ${DEVOPS_PRODUCT_NAME}
+  version: ${DEVOPS_API_VERSION}
+  description: IPOCountries
+host: $(catalog.host)
+schemes:
+  - https
+security:
+  - clientID: []
+    clientSecret: []
+securityDefinitions:
+  clientSecret:
+    type: apiKey
+    name: X-IBM-Client-Secret
+    in: header
+    x-key-type: client_secret
+  clientID:
+    type: apiKey
+    in: header
+    name: X-IBM-Client-Id
+x-ibm-configuration:
+  cors:
+    enabled: true
+  gateway: datapower-api-gateway
+  properties:
+    target-url:
+      value: ${DEVOPS_TARGET_ENDPOINT}
+      description: The URL of the target service
+      encoded: false
+  assembly:
+    execute:
+      - invoke:
+          title: invoke
+          version: 2.0.0
+          verb: keep
+          target-url: $(target-url)$(request.path)
+          follow-redirects: false
+          timeout: 60
+          parameter-control:
+            type: blacklist
+          header-control:
+            type: blacklist
+            values:
+              - ^X-IBM-Client-Id$
+          inject-proxy-headers: true
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  application-authentication:
+    certificate: false
+  
+paths:
+  /health/live:
+    get:
+      summary: IPOCountries Liveness
+      description: ''
+      operationId: liveness
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+            example: Ready
+  /health/ready:
+    get:
+      summary: IPOCountries Readiness
+      description: ''
+      operationId: readiness
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+            example: Ready
+  /countries/eea:
+    get:
+      operationId: getEea
+      responses:
+        '200':
+          description: The operation was successful.
+          schema:
+            $ref: '#/definitions/IPOCountry'
+      produces:
+        - application/json
+      description: Retrieve eea
+      parameters:
+        - name: lookup
+          in: query
+          type: boolean
+          description: if true only code and text returned for each country
+        - name: X-Ipo-Logging
+          in: header
+          type: string
+        - name: X-Ipo-Functional-Area
+          in: header
+          type: string
+        - name: X-Ipo-Recipient-Party
+          in: header
+          type: string
+        - name: X-Ipo-Reference-Id
+          in: header
+          type: string
+        - name: X-Ipo-Domain
+          in: header
+          type: string
+        - name: X-Ipo-Date-Time
+          in: header
+          type: string
+        - name: X-Ipo-Business-Tran-Id
+          in: header
+          type: string
+        - name: X-Ipo-Conversation-Id
+          in: header
+          type: string
+        - name: X-Ipo-Sender-Party
+          in: header
+          type: string
+        - name: X-Ipo-Verb
+          in: header
+          type: string
+  /countries:
+    get:
+      operationId: getCountries
+      responses:
+        '200':
+          description: The operation was successful.
+          schema:
+            $ref: '#/definitions/IPOCountry'
+      produces:
+        - application/json
+      description: Retrieve countries
+      parameters:
+        - name: includeOffices
+          in: query
+          type: boolean
+          description: Include IP offices as well as countries
+        - name: includeHistoric
+          in: query
+          type: boolean
+          description: Show historic entries. i.e. validTo is not null
+        - name: lookup
+          in: query
+          type: boolean
+          description: if true only code and text returned for each country
+        - name: X-Ipo-Business-Tran-Id
+          in: header
+          type: string
+        - name: X-Ipo-Conversation-Id
+          in: header
+          type: string
+        - name: X-Ipo-Domain
+          in: header
+          type: string
+        - name: X-Ipo-Date-Time
+          in: header
+          type: string
+        - name: X-Ipo-Sender-Party
+          in: header
+          type: string
+        - name: X-Ipo-Recipient-Party
+          in: header
+          type: string
+        - name: X-Ipo-Reference-Id
+          in: header
+          type: string
+        - name: X-Ipo-Logging
+          in: header
+          type: string
+        - name: X-Ipo-Functional-Area
+          in: header
+          type: string
+        - name: X-Ipo-Verb
+          in: header
+          type: string
+  '/countries/{countrycode}':
+    get:
+      operationId: getCountrycode
+      responses:
+        '200':
+          description: The operation was successful.
+          schema:
+            $ref: '#/definitions/IPOCountry'
+        '400':
+          description: Country Name is required
+          schema:
+            $ref: '#/definitions/meta'
+        '404':
+          description: Country Not Found
+          schema:
+            $ref: '#/definitions/meta'
+      produces:
+        - application/json
+      description: Retrieve countrycode
+      parameters:
+        - required: true
+          name: countrycode
+          in: path
+          type: string
+        - name: X-Ipo-Logging
+          in: header
+          type: string
+        - name: X-Ipo-Functional-Area
+          in: header
+          type: string
+        - name: X-Ipo-Recipient-Party
+          in: header
+          type: string
+        - name: X-Ipo-Reference-Id
+          in: header
+          type: string
+        - name: X-Ipo-Domain
+          in: header
+          type: string
+        - name: X-Ipo-Date-Time
+          in: header
+          type: string
+        - name: X-Ipo-Business-Tran-Id
+          in: header
+          type: string
+        - name: X-Ipo-Conversation-Id
+          in: header
+          type: string
+        - name: X-Ipo-Sender-Party
+          in: header
+          type: string
+        - name: X-Ipo-Verb
+          in: header
+          type: string
+        - name: lookup
+          in: query
+          type: boolean
+basePath: /ipo/LookupCountry
+definitions:
+  IPOCountry:
+    type: object
+    properties:
+      IPOCountry:
+        $ref: '#/definitions/countries'
+  meta:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/error'
+  error:
+    type: object
+    properties:
+      serviceName:
+        type: string
+      code:
+        type: string
+      detail:
+        type: string
+  countryDetail:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+      countryEndonym:
+        type: string
+      applicationNumberFormat:
+        type: string
+      isRegionalOffice:
+        type: boolean
+      isInternationalOffice:
+        type: boolean
+      isInEEA:
+        type: boolean
+      sequence:
+        type: string
+      isEC:
+        type: boolean
+      canClaimPriority:
+        type: boolean
+      isTrademarkEntity:
+        type: boolean
+      isPatentEntity:
+        type: boolean
+      validFrom:
+        type: string
+      validTo:
+        type: string
+      parisConventionIndicator:
+        type: boolean
+  countries:
+    type: object
+    properties:
+      Country:
+        type: array
+        items:
+          type: object
+          properties:
+            CountryDetail:
+              type: object
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                countryEndonym:
+                  type: string
+                applicationNumberFormat:
+                  type: string
+                isRegionalOffice:
+                  type: boolean
+                isInternationalOffice:
+                  type: boolean
+                isInEEA:
+                  type: boolean
+                sequence:
+                  type: string
+                isEC:
+                  type: boolean
+                canClaimPriority:
+                  type: boolean
+                isTrademarkEntity:
+                  type: boolean
+                isPatentEntity:
+                  type: boolean
+                validFrom:
+                  type: string
+                validTo:
+                  type: string
+                parisConventionIndicator:
+                  type: boolean

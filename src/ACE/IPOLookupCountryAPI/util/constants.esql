@@ -1,0 +1,105 @@
+BROKER SCHEMA util
+
+/*
+*
+* File name: constants.esql
+*
+* Purpose: Used for constants and common procedures/Functions
+* entries.  
+*
+* Author(s) : Vijay Tatineni
+* Date : 21 Sep 2020
+* Version :
+*
+* @copyright Intellectual Property Office 2019. All rights reserved.
+*/
+
+/*
+CREATE PROCEDURE formatResult(IN _output REFERENCE, IN _env REFERENCE, IN _shortFormat BOOLEAN)
+BEGIN
+	
+	DECLARE countriesRef REFERENCE TO _output;		
+	
+	CREATE LASTCHILD OF _output DOMAIN 'JSON';
+	CREATE LASTCHILD OF _output.JSON AS countriesRef TYPE Name NAME 'Data';	
+	CREATE LASTCHILD OF countriesRef AS countriesRef TYPE Name NAME 'data';	
+	
+	CREATE FIRSTCHILD OF countriesRef AS countriesRef NAME 'countryDetails';
+	CREATE LASTCHILD OF countriesRef AS countriesRef TYPE JSON.Array NAME 'countries';	
+	
+	
+	FOR ref AS _env.dbQuery[] DO
+		DECLARE itemRef REFERENCE TO ref;
+		CREATE LASTCHILD OF countriesRef AS itemRef NAME 'Item' ;
+		SET itemRef.code = ref.Code;
+		SET itemRef.name = ref.Name;
+		SET itemRef.countryEndonym = ref.CountryEndonym;
+		IF NOT _shortFormat THEN
+			SET itemRef.applicationNumberFormat = ref.ApplicationNumberFormat;
+			SET itemRef.isRegionalOffice = ref.isRegionalOffice;		
+			SET itemRef.isInternationalOffice = ref.isInternationalOffice;		
+			SET itemRef.isInEEA = ref.IsInEEA;		
+			SET itemRef.sequence = ref.Sequence;		
+			SET itemRef.isEC = ref.IsEC;		
+			SET itemRef.canClaimPriority = ref.CanClaimPriority;	
+			SET itemRef.isTrademarkEntity = ref.isTrademarkEntity;		
+			SET itemRef.isPatentEntity = ref.isPatentEntity;		
+			SET itemRef.validFrom = ref.ValidFrom;
+			SET itemRef.validTo = ref.ValidTo;		
+			SET itemRef.parisConventionIndicator = ref.ParisConventionIndicator;	
+		END IF;
+		
+	END FOR;		
+END; */	
+
+
+CREATE PROCEDURE formatResult(IN _output REFERENCE, IN _env REFERENCE, IN _shortFormat BOOLEAN, IN _ccShortFormat BOOLEAN)
+BEGIN
+	
+	DECLARE countryRef REFERENCE TO _output;		
+	
+	CREATE LASTCHILD OF _output DOMAIN 'JSON';
+	CREATE LASTCHILD OF _output.JSON AS countryRef TYPE Name NAME 'Data';	
+	CREATE LASTCHILD OF countryRef AS countryRef TYPE Name NAME 'IPOCountry';	
+	
+	CREATE FIRSTCHILD OF countryRef AS countryRef TYPE JSON.Array NAME 'Country';
+	--CREATE LASTCHILD OF countryRef AS countryRef NAME 'countryDetail';	
+	
+	
+	FOR ref AS _env.dbResult[] DO
+		DECLARE itemRef REFERENCE TO ref;
+		CREATE  LASTCHILD OF countryRef AS itemRef NAME 'Item' ;
+		CREATE LASTCHILD OF itemRef AS itemRef NAME 'CountryDetail';
+		
+		SET itemRef.code = ref.Code;
+		
+		IF NOT _ccShortFormat THEN
+			SET itemRef.name = ref.Name;
+			SET itemRef.countryEndonym = ref.CountryEndonym;
+		END IF;	
+		
+		IF NOT _shortFormat THEN
+			SET itemRef.applicationNumberFormat = ref.ApplicationNumberFormat;
+			SET itemRef.isRegionalOffice = ref.isRegionalOffice;		
+			SET itemRef.isInternationalOffice = ref.isInternationalOffice;		
+			SET itemRef.isInEEA = ref.IsInEEA;		
+			SET itemRef.sequence = CAST (ref.Sequence  AS CHARACTER);		
+			SET itemRef.isEC = ref.IsEC;		
+			SET itemRef.canClaimPriority = ref.CanClaimPriority;	
+			SET itemRef.isTrademarkEntity = ref.isTrademarkEntity;		
+			SET itemRef.isPatentEntity = ref.isPatentEntity;		
+			SET itemRef.validFrom = ref.ValidFrom ;
+			SET itemRef.validTo = ref.ValidTo;		
+			SET itemRef.parisConventionIndicator = ref.ParisConventionIndicator;	
+		END IF;
+		
+	END FOR;		
+END;
+	
+CREATE FUNCTION defaultBOOLEAN(IN _boolean BOOLEAN,IN _default BOOLEAN) RETURNS BOOLEAN
+BEGIN
+	IF _boolean IS NULL THEN
+		RETURN _default;
+	END IF;
+	RETURN _boolean;
+END;

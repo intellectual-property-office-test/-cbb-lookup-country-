@@ -1,0 +1,39 @@
+/*
+*
+* File name: getReadiness_ValidateAndFormat.esql
+*
+* Purpose: Readiness of the Service
+*   
+*
+* Author(s) : Vijay Tatineni
+* Date : 21 Sep 2020
+* Version :
+*
+*
+* @copyright Intellectual Property Office 2020. All rights reserved.
+*/
+
+CREATE COMPUTE MODULE getReadiness_ValidateAndFormat
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		DECLARE paramsRef REFERENCE TO InputLocalEnvironment.REST.Input.Parameters;
+		SET OutputRoot.Properties.ContentType = 'application/json';  
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

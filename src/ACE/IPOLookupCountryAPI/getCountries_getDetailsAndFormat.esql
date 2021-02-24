@@ -1,0 +1,67 @@
+PATH uk.gov.ipo.utilities, uk.gov.ipo.common, util;
+/*
+*
+* File name: getCountries_GetCountriesAndFormat.esql
+*
+* Purpose: Queries ReferenceData.WIPOCOUNTRYLOOKUP table and return dependent on query parameters
+* entries.  
+*
+* Author(s) : Vijay Tatineni
+* Date : 21 Sep 2020
+* Version :
+*
+*
+* @copyright Intellectual Property Office 2020. All rights reserved.
+*/
+
+CREATE COMPUTE MODULE getCountries_getDetailsAndFormat
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		
+		DECLARE paramsRef  REFERENCE TO InputLocalEnvironment.REST.Input.Parameters;
+		DECLARE hTTPReplyHeaderRef REFERENCE TO InputLocalEnvironment;
+		DECLARE sqlStatement CHARACTER;
+		IF (paramsRef.includeHistoric IS NOT NULL AND paramsRef.includeOffices IS NOT NULL) AND 
+				(paramsRef.includeHistoric IS TRUE AND paramsRef.includeOffices IS TRUE )	THEN
+				
+			SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE IsInternationalOffice = 1 AND IsRegionalOffice = 1 ORDER BY Sequence';
+			
+		ELSEIF (paramsRef.includeHistoric IS NOT NULL AND paramsRef.includeHistoric IS TRUE) THEN
+			
+			SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE IsInternationalOffice = 0 AND IsRegionalOffice = 0 ORDER BY Sequence';
+		
+		ELSEIF (paramsRef.includeOffices IS NOT NULL AND paramsRef.includeOffices IS TRUE) THEN	
+			SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE IsInternationalOffice = 1 AND IsRegionalOffice = 1 ORDER BY Sequence';
+			
+		ELSE	
+	    --SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE ValidTo IS NULL AND IsInternationalOffice = 0 AND IsRegionalOffice = 0 ORDER BY Sequence,Text';
+		SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE ValidTo IS NULL AND IsInternationalOffice = 0 AND IsRegionalOffice = 0 ORDER BY Sequence';
+		END IF;
+				
+		SET Environment.dbResult[] = PASSTHRU(sqlStatement);
+		
+		SET OutputRoot.Properties.ContentType = 'application/json';  
+		CREATE NEXTSIBLING OF OutputRoot.Properties AS hTTPReplyHeaderRef NAME 'HTTPReplyHeader';
+		CALL copyCommonHeaderFromEnvironmentToHTTPReply(Environment, hTTPReplyHeaderRef);
+		SET hTTPReplyHeaderRef."Content-Type" = 'application/json';
+		
+		CALL formatResult(OutputRoot,Environment,defaultBOOLEAN(charToBoolean(paramsRef.lookup),FALSE),FALSE);
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

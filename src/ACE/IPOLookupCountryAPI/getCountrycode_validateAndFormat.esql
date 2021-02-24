@@ -1,0 +1,67 @@
+PATH uk.gov.ipo.utilities, uk.gov.ipo.common,uk.gov.ipo.exception,uk.gov.ipo.logging, util;
+
+/*
+*
+* File name: getCountrycode_validateAndFormat.esql
+*
+* Purpose: Queries ReferenceData.WIPOCOUNTRYLOOKUP table and return dependent on query parameters
+* entries.  
+*
+* Author(s) : Vijay Tatineni
+* Date : 21 Sep 2020
+* Version :
+*
+*
+* @copyright Intellectual Property Office 2020. All rights reserved.
+*/
+
+CREATE COMPUTE MODULE getCountrycode_validateAndFormat
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		
+		DECLARE paramsRef REFERENCE TO InputLocalEnvironment.REST.Input.Parameters;
+		DECLARE hTTPReplyHeaderRef REFERENCE TO InputLocalEnvironment;
+		
+		IF hasText(paramsRef.countrycode) THEN		
+			DECLARE sqlStatement CHARACTER;			
+			SET sqlStatement = 'SELECT * FROM Utility.WIPOCOUNTRYLOOKUP WHERE Name = ''' || paramsRef.countrycode || ''' AND ValidTo IS NULL'; 
+			SET Environment.dbResult[] = PASSTHRU(sqlStatement);
+			
+			IF NOT (hasText(Environment.dbResult[1].Code)) THEN
+				CALL error(Environment,'country name is Invalid ');			
+				CALL sendHTTP404Response(Environment);
+				RETURN FALSE;
+			END IF;		
+		ELSE
+			CALL error(Environment,'Country Name is required ');
+			CALL addToCommonErrorStoreWithService(Environment,'IPOCountries','E.IPO.00014','Country Name is required');
+			CALL sendHTTP400Response(Environment);
+			RETURN FALSE;
+		END IF;	
+		
+		SET OutputRoot.Properties.ContentType = 'application/json';  
+		CREATE NEXTSIBLING OF OutputRoot.Properties AS hTTPReplyHeaderRef NAME 'HTTPReplyHeader';
+		CALL copyCommonHeaderFromEnvironmentToHTTPReply(Environment, hTTPReplyHeaderRef);
+		SET hTTPReplyHeaderRef."Content-Type" = 'application/json';
+		
+		CALL formatResult(OutputRoot,Environment,defaultBOOLEAN(charToBoolean(paramsRef.lookup),FALSE),defaultBOOLEAN(charToBoolean(paramsRef.lookup),FALSE));
+			
+		RETURN TRUE;
+	END;
+
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
